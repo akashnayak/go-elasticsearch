@@ -22,15 +22,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v8/estransport"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"runtime"
 	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/elastic/go-elasticsearch/v8/estransport"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
@@ -513,8 +515,9 @@ func (w *worker) flush(ctx context.Context) error {
 		req.Header = http.Header{}
 	}
 	req.Header.Set(estransport.HeaderClientMeta, "h=bp")
-
+	start := time.Now()
 	res, err := req.Do(ctx, w.bi.config.Client)
+	log.Print("response time: ", time.Since(start))
 	if err != nil {
 		atomic.AddUint64(&w.bi.stats.numFailed, uint64(len(w.items)))
 		if w.bi.config.OnError != nil {
