@@ -289,7 +289,7 @@ func (bi *bulkIndexer) Stats() BulkIndexerStats {
 // init initializes the bulk indexer.
 //
 func (bi *bulkIndexer) init() {
-	bi.queue = make(chan BulkIndexerItem, bi.config.NumWorkers)
+	bi.queue = make(chan BulkIndexerItem, bi.config.NumWorkers*5000)
 
 	for i := 1; i <= bi.config.NumWorkers; i++ {
 		w := worker{
@@ -517,7 +517,8 @@ func (w *worker) flush(ctx context.Context) error {
 	req.Header.Set(estransport.HeaderClientMeta, "h=bp")
 	start := time.Now()
 	res, err := req.Do(ctx, w.bi.config.Client)
-	log.Print("response time: ", time.Since(start))
+	//log.Print("response time: ", time.Since(start))
+	log.Printf("length is %d and response time: %s", w.buf.Len(), time.Since(start))
 	if err != nil {
 		atomic.AddUint64(&w.bi.stats.numFailed, uint64(len(w.items)))
 		if w.bi.config.OnError != nil {
