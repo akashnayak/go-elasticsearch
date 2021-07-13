@@ -517,7 +517,7 @@ func (w *worker) flush(ctx context.Context) error {
 	req.Header.Set(estransport.HeaderClientMeta, "h=bp")
 	start := time.Now()
 	res, err := req.Do(ctx, w.bi.config.Client)
-	log.Printf("response time: %s and total items: %d", time.Since(start), uint64(len(w.items)))
+	log.Printf("worked id: %d, response time: %s and items: %d", w.id, time.Since(start), uint64(len(w.items)))
 	if err != nil {
 		atomic.AddUint64(&w.bi.stats.numFailed, uint64(len(w.items)))
 		if w.bi.config.OnError != nil {
