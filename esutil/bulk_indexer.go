@@ -518,7 +518,8 @@ func (w *worker) flush(ctx context.Context) error {
 	start := time.Now()
 	res, err := req.Do(ctx, w.bi.config.Client)
 	//log.Print("response time: ", time.Since(start))
-	log.Printf("length is %d and response time: %s", w.buf.Len(), time.Since(start))
+	//log.Printf("length is %d and response time: %s", w.buf.Len(), time.Since(start))
+	log.Printf("length is %d and response time: %s and items is %d", w.buf.Len(), time.Since(start), uint64(len(w.items)))
 	if err != nil {
 		atomic.AddUint64(&w.bi.stats.numFailed, uint64(len(w.items)))
 		if w.bi.config.OnError != nil {
